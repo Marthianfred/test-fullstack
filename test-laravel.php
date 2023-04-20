@@ -2,6 +2,8 @@
 
 /* ### 1. Un usuario realizó una publicación el día de ayer, hoy un administrador del sistema necesita visualizar la 
 publicación que se hizo y que usuario la realizó. Explica si el código a continuación es correcto.
+
+No. cumple con el requerimiento
 */
 
 /* ### 1. A user made a post yesterday, today a system administrator needs to see the content of the post that was 
@@ -42,8 +44,14 @@ class PostController extends Controller {
 
 /* ### 2. Un desarrollador necesita dar solución a una petición, la cual debe cargar cierta información. 
 Esta información tiene es un conjunto de registros los cuales tiene los campos: User_Id, Tittle_Post, Comment. 
-Se debe tener en consideración el tiempo de ejecución, que el usuario que realiza el port exista y que el número
+Se debe tener en consideración el tiempo de ejecución, que el usuario que realiza el post exista y que el número
 de registros sea mínimo 10000. Explica si el código a continuación es correcto.
+
+
+Segun el criterio de guardar si es posible dar solucion con esta funcion teniendo presente
+que no sabemos cuanta informacion existe en la Request->data;
+la funcion no cuenta con un limite el request data;
+
 */
 
 /* ### 2. A developer needs to provide a solution to a request, which must load certain information. 
@@ -99,14 +107,19 @@ the number of alert records exceeds 6k records. Explain the code below and what 
 */
 public function downloadAlerts(Request $request)
     {
-        ImportAlerts::dispatch(
+        $alerts = ImportAlerts::dispatch(
             $request->ids
         );
+
+        $file = "prueba.txt";
+        $fh = fopen($file, "w");
+        fwrite($fh, $alerts);
+        fclose($file);
 
         $response         = new \stdClass();
         $response->status   = 200;
         $response->message   = 'The report is being generated, you will receive an email when finished.';
-
+        $response->file = 'the file can be downloaded for there <a href="$file">$file</a>';
         return response()->json(
             $response,
             200

@@ -48,17 +48,17 @@ import { BehaviorSubject, catchError, map, of, tap, retry } from 'rxjs';
     <div class="container">
       <section>
         <div class="card">
-          <div class="card-title">{{ title }}</div>
+          <div id="title" class="card-title text-uppercase">{{ title }}</div>
           <br />
           <hr />
           <br />
 
-          <div class="card-body">{{ body }}</div>
+          <div class="card-body text-lowercase">{{ body }}</div>
           <br />
           <hr />
           <br />
 
-          <div class="card-footer">{{ footer }}</div>
+          <div class="card-footer text-capitalize">{{ footer }}</div>
         </div>
       </section>
       <change-content></change-content>
@@ -106,8 +106,9 @@ export class ContentService {
     return this.footer$;
   }
 
-  changeTitle() {
+  changeTitle(title) {
     // Desarrollar el cuerpo del método / Develop the method body
+    this.title = title;
   }
 }
 
@@ -125,18 +126,28 @@ export class ContentService {
   `,
 })
 export class ChangeContentComponent {
+
   newTitle = 'Este es el titulo modificado por otro componente';
   hasError = false;
   hasContent = false;
 
-  constructor( private service: GetContentService) {}
+  constructor( private service: GetContentService, private serviceContent: ContentService) {}
 
   changeTitle() {
     // Desarrollar el cuerpo del método / Develop the method body
+    this.serviceContent.changeTitle(this.newTitle);
+
   }
 
   callApi(){
     // Desarrollar el cuerpo del método / Develop the method body
+
+    try {
+      this.service.getContent();
+      console.log('Connection to API Success');
+    }catch (e){
+      console.log('Connection to API Failed :' + e);
+    }
   }
 }
 
@@ -148,7 +159,7 @@ export class GetContentService {
     private http: HttpClient
   ) {}
 
-  getContent(){
+  public getContent(){
     const url = 'https://sitenotexist.com/content/0';
 
     return this.http.get(url).pipe(
